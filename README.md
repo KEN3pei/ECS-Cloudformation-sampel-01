@@ -64,3 +64,7 @@
 
 4. ecs service経由でECR上のイメージをpullしてきたのち、task実行
 
+5. あらかじめ用意しているALBのDNS名でアクセス
+   
+   - localで試した時と同じhtmlが表示されれば成功！
+   - 
