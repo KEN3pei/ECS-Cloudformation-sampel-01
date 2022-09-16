@@ -1,0 +1,14 @@
+version: '3'
+services:
+  nginx:
+    build: .
+    # image: allhome/app:latest
+    image: 706353777632.dkr.ecr.ap-northeast-1.amazonaws.com/allhome/app:latest
+    ports:
+      - "80:80"
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: nginx-service-01
+        awslogs-region: ap-northeast-1
+        awslogs-stream-prefix: nginx-service-01

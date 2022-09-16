@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - ClusterName
+          - VPCID
+          - ALBSecurityGroup
+
+Parameters:
+  ClusterName:
+    Type: "String"
+    Description: "Enter the name of the ECS Cluster."
+    Default: "ecs-cluster-01"
+  VPCID:
+    Type: "AWS::EC2::VPC::Id"
+    Description: "Select at your VPC."
+  ALBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup::Id"
+    Description: "Select the alb security group to be used for front container security group."
+
+# refer => https://github.com/noname-work/aws-cloudformation/blob/f6c6463e67a13c05ee7a267ad8de7a9512076d92/ecs/ecs-on-ec2/create-ecs-service.yml#L84
+Resources:
+  EcsCluster:
+    Type: "AWS::ECS::Cluster"
+    Properties: 
+      ClusterName: !Ref "ClusterName"
+       # ContainerInsightsを利用する設定。追加料金が発生するが細かなメトリクスを確認できる。
+      ClusterSettings: 
+        - Name: "containerInsights"
+          # 詳細な監視が必要な場合はenabledにしておく
+          Value: "disabled"
+      Tags: 
+        - Key: "Name"
+          Value: !Ref "ClusterName"
+
+  # Frontコンテナセキュリティグループ
+  ECSSecurityGroup01:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: !Sub "${ClusterName}-ecs-sg01"
+      GroupDescription: "Allow access from ALB only."
+      VpcId: !Ref VPCID
+      # ALBセキュリティグループからのアクセスを許可
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: "tcp"
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${ClusterName}-ecs-sg01"
+  # Apiコンテナセキュリティグループ
+  ECSSecurityGroup02:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: !Sub "${ClusterName}-ecs-sg02"
+      GroupDescription: "Allow access from ECS ENI only."
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          # Frontコンテナセキュリティグループからのアクセスのみ許可
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref ECSSecurityGroup01
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${ClusterName}-ecs-sg02"
+  
+  # ECSで利用するためのインスタンスロール
+  EcsInstanceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "${ClusterName}-instance-role"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role" # コンテナインスタンスがECRにアクセスできるように付与している
+        - "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+                - "ecs-tasks.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  # ECSタスク実行ロール
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ClusterName}-ECSTaskExecutionRolePolicy"
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+                - "ecs-tasks.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+
+  # ESR
+  EcrRepository:
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: "${ClusterName}/app"

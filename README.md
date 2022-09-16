@@ -1,0 +1,70 @@
+### ECS構築手順（cloudFormation x local）
+
+1. cloudformationでclusterまで作成
+
+2. ecs profileを設定
+  - アクセスキーを発行（どこから？）
+  - `ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成する
+
+3. sample imageの動作確認
+  - docker compose up -d -> allhome/app:v1.0.0イメージを生成
+  - http://localhost:80 でhtmlが表示されればOK
+
+4. イメージをECRにpush(latest tagでpush)
+  - `./ecs-push.sh`を実行（可変部分は引数で受け取るようにする）
+  - IMAGEとTAGを入力
+  - latest, 日付のイメージが最新にあり、その状態でlatestタグのイメージをpushするとlatestタグが最新の方に勝手に付け変わる。
+
+4. が成功したら日付tagを追加
+  - `./ecr-retag.sh allhome/app latest`
+  - ここで日付タグをつけておくことで最新のlatestタグがpushされてもイメージが日付だけになって残る。
+    ```
+    1. ローカルのイメージ更新
+    2. イメージをlatestでpush
+    3. 古いlatestタグが最新のイメージに付け変わる
+    4. latestイメージに日付タグも追加
+    ```
+
+5. ecs-cli compose service upでサービスのタスク定義を作成・デプロイ（Activate -> Running）
+  - `./ecs-up-service.sh`を実行
+  - ECSのタスク定義一覧から確認可能
+  - 以下のようなエラーが出た
+    ```shell
+    FATA[0303] Deployment has not completed: Running count has not changed for 5.00 minutes 
+    ```
+    どうやらRoll関連のエラーらしい  
+    ```shell
+    service nginx failed to launch a task with (error ECS was unable to assume the role 'arn:aws:iam::706353777632:role/allhome-ecs-cluster-instance-role' that was provided for this task. Please verify that the role being passed has the proper trust relationship and permissions and that your IAM user has permissions to pass this role.).
+    ```
+    - 公式のトラブルシューティングを試す[公式]（https://aws.amazon.com/jp/premiumsupport/knowledge-center/ecs-unable-to-assume-role/）
+      `aws iam get-role --role-name allhome-ecs-cluster-instance-role`
+      どうやら2つめの信頼関係ポリシーに`ecs-tasks.amazonaws.com`が許可されていない。
+  - 別のエラーが出た
+    ```shell
+    CannotPullContainerError: inspect image has been retried 5 time(s): failed to resolve ref "docker.io/allhome/app:latest": failed to do request: Head https://registry-1.docker.io/v2/allhome/app/manifests/latest: dial tcp 54.83.42.45:443: i/o timeout
+    ```
+  - [公式](https://aws.amazon.com/jp/premiumsupport/knowledge-center/ecs-pull-container-error/)のトラブルシューティング
+    - ~~おそらくECR読み取りの権限がない~~(管理者権限のIAMで実行しているので関係なさそう)
+    - ~~自動割り当てパブリックIPがなさそう~~
+    - A. imageの指定するECRイメージのURlが間違っていた（/allhome/app -> 706353777632.dkr.ecr.ap-northeast-1.amazonaws.com/allhome/app:latest）
+  - 別のエラー
+    ```
+    ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve ecr registry auth: service call has been retried 3 time(s): RequestError: send request failed caused by: Post https://api.ecr.ap-northeast-1.amazonaws.com/: dial tcp 52.119.222.141:443: i/o timeout
+    ```
+  - private subnetからALB経由でECRを見に行くことはできないらしい（igwをつけるかVPCエンドポイントをつける必要がある）
+  - 別のエラー...
+   `Essential container ~`
+   - とりあえずCloudWatchLogsを動かせるようにして動作確認
+    - `standard_init_linux.go:228: exec user process caused: exec format error`
+    - どうやらCPUアーキテクチャの違いによるイメージの問題らしい。
+      - nginx -> amd64/nginxにイメージを変更
+      
+
+    
+    
+
+5. ecs service経由でECR上のイメージをpullしてきたのち、task実行
+
+# 最初だけservice upであとはcreateでデプロイすれば自動で更新される？
+
+# 直近の課題CloudWatchLogsを組み込む
