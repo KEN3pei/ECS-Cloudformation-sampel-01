@@ -3,7 +3,7 @@
 1. cloudformationでclusterまで作成
 
 2. ecs profileを設定
-  - アクセスキーを発行（どこから？）
+  - アクセスキーを発行
   - `ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成する
 
 3. sample imageの動作確認
