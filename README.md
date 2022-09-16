@@ -1,13 +1,14 @@
-### ECS構築手順（cloudFormation x local）
+# ECS構築手順（cloudFormation x local）
 
-1. cloudformationでclusterまで作成
+### 事前準備
+1. cloudformationでVPC -> ALB -> ECSClusterまで作成
 
 2. ecs profileを設定
-  - アクセスキーを発行（どこから？）
-  - `ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成する
+  - アクセスキーを発行
+  - `./ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成
 
-3. sample imageの動作確認
-  - docker compose up -d -> allhome/app:v1.0.0イメージを生成
+3. imageの動作確認
+  - docker compose up -d -> `allhome/app:latest`イメージを生成
   - http://localhost:80 でhtmlが表示されればOK
 
 4. イメージをECRにpush(latest tagでpush)
