@@ -8,14 +8,14 @@
   - `./ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成
 
 3. imageの動作確認
-  - docker compose up -d -> `allhome/app:latest`イメージを生成
+  - docker-compose -f docker-compose.local.yml up -d
+  - `allhome/app:latest`イメージを生成
   - http://localhost:80 でhtmlが表示されればOK
 
 ### 構築開始
 
 1. イメージをECRにpush(latest tagでpush)
   - `./ecs-push.sh`を実行（可変部分は引数で受け取るようにする）
-  - IMAGEとTAGを入力
   - latest, 日付のイメージが最新にあり、その状態でlatestタグのイメージをpushするとlatestタグが最新の方に勝手に付け変わる。
 
 2. pushしたイメージに日付tagを追加
