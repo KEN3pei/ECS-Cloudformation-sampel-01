@@ -1,21 +1,24 @@
 #!/bin/sh
 
-FILE="./docker-compose.yml"
-PARAMS_FILE="./ecs-params.yml"
-NAME="nginx"
+# read .env
+source ./.env
+
+# FILE="./docker-compose.yml"
+# PARAMS_FILE="./ecs-params.yml"
+# NAME="nginx"
 # NAME="allhome-project"
-TASK_EXEC_IAM_ROLE_ARN="arn:aws:iam::706353777632:role/allhome-ecs-cluster-ECSTaskExecutionRolePolicy"
-INSTANCE_ROLE_ARN="arn:aws:iam::706353777632:role/allhome-ecs-cluster-instance-role"
-REGION="ap-northeast-1"
-CLUSTER_NAME="allhome-ecs-cluster"
+# TASK_EXEC_IAM_ROLE_ARN="arn:aws:iam::706353777632:role/allhome-ecs-cluster-ECSTaskExecutionRolePolicy"
+# INSTANCE_ROLE_ARN="arn:aws:iam::706353777632:role/allhome-ecs-cluster-instance-role"
+# REGION="ap-northeast-1"
+# CLUSTER_NAME="allhome-ecs-cluster"
 # service
-TARGET_GROUP_ARN="arn:aws:elasticloadbalancing:ap-northeast-1:706353777632:targetgroup/allhome-ecs-cluster-tg/a2d1231b3a43f180"
-CONTAINER_NAME="nginx"
+# TARGET_GROUP_ARN="arn:aws:elasticloadbalancing:ap-northeast-1:706353777632:targetgroup/allhome-ecs-cluster-tg/a2d1231b3a43f180"
+# CONTAINER_NAME="nginx"
 # CONTAINER_NAME="front"
-CONTAINER_PORT="80"
-ECS_PROFILE="ecs-user01"
-LAUNCH_TYPE="FARGATE"
-TIMEOUT="6.5"
+# CONTAINER_PORT="80"
+# ECS_PROFILE="ecs-user01"
+# LAUNCH_TYPE="FARGATE"
+# TIMEOUT="6.5"
 
 # ecs-cli compose 
     # タスク用の IAM ロール
