@@ -1,30 +1,30 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  VPC-01:
+  VPC01:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
       Tags:
         -
           Key: Name
-          Value: VPC-01
-  IGW-01:
+          Value: VPC01
+  IGW01:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: IGW-01   
+          Value: IGW01   
   AttachGateway01:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      InternetGatewayId : !Ref IGW-01
-      VpcId: !Ref VPC-01
+      InternetGatewayId : !Ref IGW01
+      VpcId: !Ref VPC01
   
   # PublicSubnet01 RoutetableSetting
   RouteTableForPublicSubnet01:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       Tags:
         - Key: Name
           Value: RouteTableForPublicSubnet-01
@@ -33,7 +33,7 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTableForPublicSubnet01
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref IGW-01
+      GatewayId: !Ref IGW01
   AssocciateRouteTableForPublicSubnet01:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -44,7 +44,7 @@ Resources:
   RouteTableForPublicSubnet02:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       Tags:
         - Key: Name
           Value: RouteTableForPublicSubnet-02
@@ -53,7 +53,7 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTableForPublicSubnet02
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref IGW-01
+      GatewayId: !Ref IGW01
   AssocciateRouteTableForPublicSubnet01:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -66,7 +66,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.1.0/26
       MapPublicIpOnLaunch: true
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       AvailabilityZone: ap-northeast-1a
       Tags:
         - Key: Name
@@ -76,7 +76,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.1.64/26
       MapPublicIpOnLaunch: true
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
@@ -87,7 +87,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.1.128/28
       MapPublicIpOnLaunch: false
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
@@ -97,7 +97,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.1.144/28
       MapPublicIpOnLaunch: false
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
@@ -107,7 +107,7 @@ Resources:
     Properties:
       CidrBlock: 10.0.1.160/27
       MapPublicIpOnLaunch: false
-      VpcId: !Ref VPC-01
+      VpcId: !Ref VPC01
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
