@@ -2,7 +2,8 @@ version: '3'
 services:
   nginx:
     build: .
-    image: 706353777632.dkr.ecr.ap-northeast-1.amazonaws.com/template/app:latest
+    # 自分の環境で作成されたECRのARNを設定する
+    image: 0000000000.dkr.ecr.ap-northeast-1.amazonaws.com/template/app:latest
     ports:
       - "80:80"
     logging:

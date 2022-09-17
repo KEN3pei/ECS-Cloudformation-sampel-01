@@ -17,7 +17,8 @@
   - ECSのlogを取る用のlog-groupを先に作っておく
   - docker-compose.ymlと合わせる
 
-5. params.ymlの設定を埋める
+5. compose.ymlの設定を埋める
+  - docker-compose.ymlのimage部分を自分の環境に合わせる
   - params.example.ymlを参考にparams.ymlを作る
 
 6. .envを自分の環境に合わせて埋める
@@ -40,8 +41,6 @@
     3. 古いlatestタグが最新のイメージに付け変わる
     4. latestイメージに日付タグも追加
     ```
-
-2-1 docker-compose.ymlのimageタグを修正
 
 3. ecs-cli compose service upでサービスのタスク定義を作成・デプロイ
   - `./ecs-up-service.sh`を実行
