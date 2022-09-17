@@ -7,13 +7,13 @@ Resources:
       Tags:
         -
           Key: Name
-          Value: VPC01
+          Value: TemplateVPC01
   IGW01:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: IGW01   
+          Value: TemplateIGW01   
   AttachGateway01:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -70,7 +70,7 @@ Resources:
       AvailabilityZone: ap-northeast-1a
       Tags:
         - Key: Name
-          Value: PublicSubnet-01
+          Value: Template-PublicSubnet-01
   PublicSubnet02:
     Type: AWS::EC2::Subnet
     Properties:
@@ -80,7 +80,7 @@ Resources:
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
-          Value: PublicSubnet-02
+          Value: Template-PublicSubnet-02
 # Application or DBに使用する
   PrivateSubnet01:
     Type: AWS::EC2::Subnet
@@ -91,7 +91,7 @@ Resources:
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
-          Value: PrivateSubnet-01
+          Value: Template-PrivateSubnet-01
   PrivateSubnet02:
     Type: AWS::EC2::Subnet
     Properties:
@@ -101,7 +101,7 @@ Resources:
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
-          Value: PrivateSubnet-02    
+          Value: Template-PrivateSubnet-02    
   PrivateSubnet03:
     Type: AWS::EC2::Subnet
     Properties:
@@ -111,4 +111,4 @@ Resources:
       AvailabilityZone: ap-northeast-1c
       Tags:
         - Key: Name
-          Value: PrivateSubnet-03
+          Value: Template-PrivateSubnet-03

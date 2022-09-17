@@ -12,7 +12,7 @@ Parameters:
   ClusterName:
     Type: "String"
     Description: "Enter the name of the ECS Cluster."
-    Default: "ecs-cluster-01"
+    Default: "ecs-cluster"
   VPCID:
     Type: "AWS::EC2::VPC::Id"
     Description: "Select at your VPC."
@@ -115,4 +115,4 @@ Resources:
   EcrRepository:
     Type: "AWS::ECR::Repository"
     Properties:
-      RepositoryName: "${ClusterName}/app"
+      RepositoryName: "template/app"
