@@ -1,21 +1,24 @@
-### ECS構築手順（cloudFormation x local）
+# ECS構築手順（cloudFormation x local）
 
-1. cloudformationでclusterまで作成
+### 事前準備
+1. cloudformationでVPC -> ALB -> ECSClusterまで作成
 
 2. ecs profileを設定
   - アクセスキーを発行
-  - `ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成する
+  - `./ecs-config.sh`を実行してecsにアクセスできるようにprofileを作成
 
-3. sample imageの動作確認
-  - docker compose up -d -> allhome/app:v1.0.0イメージを生成
+3. imageの動作確認
+  - docker compose up -d -> `allhome/app:latest`イメージを生成
   - http://localhost:80 でhtmlが表示されればOK
 
-4. イメージをECRにpush(latest tagでpush)
+### 構築開始
+
+1. イメージをECRにpush(latest tagでpush)
   - `./ecs-push.sh`を実行（可変部分は引数で受け取るようにする）
   - IMAGEとTAGを入力
   - latest, 日付のイメージが最新にあり、その状態でlatestタグのイメージをpushするとlatestタグが最新の方に勝手に付け変わる。
 
-4. が成功したら日付tagを追加
+2. pushしたイメージに日付tagを追加
   - `./ecr-retag.sh allhome/app latest`
   - ここで日付タグをつけておくことで最新のlatestタグがpushされてもイメージが日付だけになって残る。
     ```
@@ -25,7 +28,7 @@
     4. latestイメージに日付タグも追加
     ```
 
-5. ecs-cli compose service upでサービスのタスク定義を作成・デプロイ（Activate -> Running）
+3. ecs-cli compose service upでサービスのタスク定義を作成・デプロイ（Activate -> Running）
   - `./ecs-up-service.sh`を実行
   - ECSのタスク定義一覧から確認可能
   - 以下のようなエラーが出た
@@ -58,13 +61,10 @@
     - `standard_init_linux.go:228: exec user process caused: exec format error`
     - どうやらCPUアーキテクチャの違いによるイメージの問題らしい。
       - nginx -> amd64/nginxにイメージを変更
-      
 
-    
-    
+4. ecs service経由でECR上のイメージをpullしてきたのち、task実行
 
-5. ecs service経由でECR上のイメージをpullしてきたのち、task実行
-
-# 最初だけservice upであとはcreateでデプロイすれば自動で更新される？
-
-# 直近の課題CloudWatchLogsを組み込む
+5. あらかじめ用意しているALBのDNS名でアクセス
+   
+   - localで試した時と同じhtmlが表示されれば成功！
+   - 
