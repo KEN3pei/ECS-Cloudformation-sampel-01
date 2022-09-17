@@ -19,7 +19,7 @@
   - latest, 日付のイメージが最新にあり、その状態でlatestタグのイメージをpushするとlatestタグが最新の方に勝手に付け変わる。
 
 2. pushしたイメージに日付tagを追加
-  - `./ecr-retag.sh allhome/app latest`
+  - `./ecr-retag.sh template/app latest`
   - ここで日付タグをつけておくことで最新のlatestタグがpushされてもイメージが日付だけになって残る。
     ```
     1. ローカルのイメージ更新
