@@ -61,6 +61,23 @@
     - `standard_init_linux.go:228: exec user process caused: exec format error`
     - どうやらCPUアーキテクチャの違いによるイメージの問題らしい。
       - nginx -> amd64/nginxにイメージを変更
+  - 新しくテンプレ作成時に出たエラー
+    ```shell
+    ERRO[0005] Error creating service                        error="InvalidParameterException: You cannot specify an IAM role for services that require a service linked role.
+    ```
+    - 公式より
+    - awsvpcネットワーク モードを使用する場合、サービスにリンクされたロールが必要です
+    - アカウントが Amazon ECS サービスにリンクされたロールをすでに作成している場合、ここでロールを指定しない限り、そのロールがサービスに使用される。
+    - 解決策（https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/using-service-linked-roles.html）
+    - サービスリンクRoleが手動でECSを作成した時かどこかのタイミングで作られてしまっていた。
+    - そうなるとECSのインスタンスロールはサービスリンクロールで固定されるので、ecs-cliでservice upするときにエラーが出てしまっていた。
+    - サービス起動時にインスタンスロールの指定をなくすことで解決
+    - TODO: テンプレ作成時は事前にサービスリンクロールを作るように指示を追加する
+    - TODO: インスタンスロールの作成をテンプレから外す
+
+    - awslogs-groupは先に作るようにする
+    - params.ymlに.envは反映できない（パラメータストアとか使うしかない）
+
 
 4. ecs service経由でECR上のイメージをpullしてきたのち、task実行
 

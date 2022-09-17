@@ -1,6 +1,6 @@
 version: 1
 task_definition:
-  task_execution_role: arn:aws:iam::706353777632:role/allhome-ecs-cluster-instance-role
+  task_execution_role: arn:aws:iam::706353777632:role/template-ecs-cluster-ECSTaskExecutionRolePolicy
   ecs_network_mode: awsvpc
   task_size:
     mem_limit: 0.5GB
@@ -9,8 +9,8 @@ run_params:
   network_configuration:
     awsvpc_configuration:
       subnets:
-        - subnet-0c2199b834dd89153
-        - subnet-0409051661a28dbd0
+        - subnet-06d58cee7a995aee2
+        - subnet-0061d83221de303fd
       security_groups:
-        - sg-0544e73992133ea89
+        - sg-0f5fed912857cac7e
       assign_public_ip: ENABLED
