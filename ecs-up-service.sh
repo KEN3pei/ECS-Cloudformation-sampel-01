@@ -3,14 +3,6 @@
 # read .env
 source ./.env
 
-# ecs-cli compose 
-    # タスク用の IAM ロール
-    # --task-role-arn ${IAM_ROLE_ARN} \ --roleと同じ？
-# service create
-    # service rinked role デフォルトでは作成済みのroleが使用されるはず
-    # https://www.yokoyan.net/entry/2021/10/15/180000
-    # --role ${INSTANCE_ROLE_ARN} \
-
 ecs-cli compose \
     --verbose \
     --file ${FILE} \
