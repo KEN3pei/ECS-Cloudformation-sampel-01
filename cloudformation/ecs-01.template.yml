@@ -73,24 +73,25 @@ Resources:
           Value: !Sub "${ClusterName}-ecs-sg02"
   
   # ECSで利用するためのインスタンスロール
-  EcsInstanceRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      RoleName: !Sub "${ClusterName}-instance-role"
-      ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role" # コンテナインスタンスがECRにアクセスできるように付与している
-        - "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
-        - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "ec2.amazonaws.com"
-                - "ecs-tasks.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
+  # サービスリンクがある場合不要
+  # EcsInstanceRole:
+  #   Type: "AWS::IAM::Role"
+  #   Properties:
+  #     RoleName: !Sub "${ClusterName}-instance-role"
+  #     ManagedPolicyArns:
+  #       - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role" # コンテナインスタンスがECRにアクセスできるように付与している
+  #       - "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+  #       - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  #     AssumeRolePolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: "Allow"
+  #           Principal:
+  #             Service:
+  #               - "ec2.amazonaws.com"
+  #               - "ecs-tasks.amazonaws.com"
+  #           Action:
+  #             - "sts:AssumeRole"
 
   # ECSタスク実行ロール
   ECSTaskExecutionRole:
