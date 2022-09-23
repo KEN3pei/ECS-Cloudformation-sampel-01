@@ -9,8 +9,11 @@ run_params:
   network_configuration:
     awsvpc_configuration:
       subnets:
+        # ECS用に作成したsubnetのIDを指定してください
         - subnet-0a0a0a0a0a0a0a0a0
         - subnet-0b0b0b0b0b0b0b0b0
       security_groups:
+        # ECSで動かすコンテナ用に作成したSGのIDを指定してください
+        # このテンプレではnginxコンテナ用のものです
         - sg-0c0c0c0c0c0c0c0c0
       assign_public_ip: ENABLED
