@@ -10,7 +10,7 @@
 
 3. ECRに上げるimageの動作確認
     - docker-compose -f docker-compose.local.yml up -d
-    - `allhome/app:latest`イメージを生成
+    - `template/app:latest`イメージを生成
     - http://localhost:80 でhtmlが表示されればOK
 
 4. awslogs-groupを先に作る
